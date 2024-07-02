@@ -22,6 +22,8 @@ import numpy as np
 import PIL.Image
 import torch
 from tqdm import tqdm
+from random import randrange
+import random
 
 from training.encoders import StabilityVAEEncoder
 
@@ -62,7 +64,7 @@ def is_image_ext(fname: Union[str, Path]) -> bool:
 
 #----------------------------------------------------------------------------
 
-def open_image_folder(source_dir, *, max_images: Optional[int]) -> tuple[int, Iterator[ImageEntry]]:
+def open_image_folder(source_dir, iterations, *, max_images: Optional[int]) -> tuple[int, Iterator[ImageEntry]]:
     input_images = []
     def _recurse_dirs(root: str): # workaround Path().rglob() slowness
         with os.scandir(root) as it:
@@ -71,7 +73,10 @@ def open_image_folder(source_dir, *, max_images: Optional[int]) -> tuple[int, It
                     input_images.append(os.path.join(root, e.name))
                 elif e.is_dir():
                     _recurse_dirs(os.path.join(root, e.name))
-    _recurse_dirs(source_dir)
+
+    for i in range(iterations):
+        _recurse_dirs(source_dir)
+
     input_images = sorted([f for f in input_images if is_image_ext(f)])
 
     arch_fnames = {fname: os.path.relpath(fname, source_dir).replace('\\', '/') for fname in input_images}
@@ -103,18 +108,21 @@ def open_image_folder(source_dir, *, max_images: Optional[int]) -> tuple[int, It
 
 #----------------------------------------------------------------------------
 
-def open_image_zip(source, *, max_images: Optional[int]) -> tuple[int, Iterator[ImageEntry]]:
-    with zipfile.ZipFile(source, mode='r') as z:
-        input_images = [str(f) for f in sorted(z.namelist()) if is_image_ext(f)]
-        max_idx = maybe_min(len(input_images), max_images)
+def open_image_zip(source, iterations, *, max_images: Optional[int]) -> tuple[int, Iterator[ImageEntry]]:
+    input_images = []
 
-        # Load labels.
-        labels = dict()
-        if 'dataset.json' in z.namelist():
-            with z.open('dataset.json', 'r') as file:
-                data = json.load(file)['labels']
-                if data is not None:
-                    labels = {x[0]: x[1] for x in data}
+    for i in range(iterations):
+        with zipfile.ZipFile(source, mode='r') as z:
+            input_images += [str(f) for f in sorted(z.namelist()) if is_image_ext(f)]
+            max_idx = maybe_min(len(input_images), max_images)
+
+            # Load labels.
+            labels = dict()
+            if 'dataset.json' in z.namelist():
+                with z.open('dataset.json', 'r') as file:
+                    data = json.load(file)['labels']
+                    if data is not None:
+                        labels = {x[0]: x[1] for x in data}
 
     def iterate_images():
         with zipfile.ZipFile(source, mode='r') as z:
@@ -147,6 +155,21 @@ def make_transform(
     def center_crop(width, height, img):
         crop = np.min(img.shape[:2])
         img = img[(img.shape[0] - crop) // 2 : (img.shape[0] + crop) // 2, (img.shape[1] - crop) // 2 : (img.shape[1] + crop) // 2]
+        img = PIL.Image.fromarray(img, 'RGB')
+        img = img.resize((width, height), PIL.Image.Resampling.LANCZOS)
+        return np.array(img)
+    
+    def random_flip_crop(width, height, img):
+        if random.uniform(0, 1) > 0.5:
+            img = np.flip(img, 0)
+        
+        if random.uniform(0, 1) > 0.5:
+            img = np.flip(img, 1)
+
+        range = img.shape[0] - width
+        randomOffsetX = randrange(range)
+        randomOffsetY = randrange(range)
+        img = img[randomOffsetX : randomOffsetX + width, randomOffsetY : randomOffsetY + height]
         img = PIL.Image.fromarray(img, 'RGB')
         img = img.resize((width, height), PIL.Image.Resampling.LANCZOS)
         return np.array(img)
@@ -188,11 +211,19 @@ def make_transform(
 
     if transform is None:
         return functools.partial(scale, output_width, output_height)
+    if transform == 'random-flip-crop':
+        if output_width is None or output_height is None:
+            raise click.ClickException('must specify --resolution=WxH when using ' + transform + 'transform')
+        return functools.partial(random_flip_crop, output_width, output_height)
     if transform == 'center-crop':
         if output_width is None or output_height is None:
             raise click.ClickException('must specify --resolution=WxH when using ' + transform + 'transform')
         return functools.partial(center_crop, output_width, output_height)
     if transform == 'center-crop-wide':
+        if output_width is None or output_height is None:
+            raise click.ClickException('must specify --resolution=WxH when using ' + transform + ' transform')
+        return functools.partial(center_crop_wide, output_width, output_height)
+    if transform == 'random-flip-crop':
         if output_width is None or output_height is None:
             raise click.ClickException('must specify --resolution=WxH when using ' + transform + ' transform')
         return functools.partial(center_crop_wide, output_width, output_height)
@@ -206,12 +237,12 @@ def make_transform(
 
 #----------------------------------------------------------------------------
 
-def open_dataset(source, *, max_images: Optional[int]):
+def open_dataset(source, iterations, *, max_images: Optional[int]):
     if os.path.isdir(source):
-        return open_image_folder(source, max_images=max_images)
+        return open_image_folder(source, iterations, max_images=max_images)
     elif os.path.isfile(source):
         if file_ext(source) == 'zip':
-            return open_image_zip(source, max_images=max_images)
+            return open_image_zip(source, iterations, max_images=max_images)
         else:
             raise click.ClickException(f'Only zip archives are supported: {source}')
     else:
@@ -263,15 +294,17 @@ def cmdline():
 @click.option('--source',     help='Input directory or archive name', metavar='PATH',   type=str, required=True)
 @click.option('--dest',       help='Output directory or archive name', metavar='PATH',  type=str, required=True)
 @click.option('--max-images', help='Maximum number of images to output', metavar='INT', type=int)
-@click.option('--transform',  help='Input crop/resize mode', metavar='MODE',            type=click.Choice(['center-crop', 'center-crop-wide', 'center-crop-dhariwal']))
+@click.option('--transform',  help='Input crop/resize mode', metavar='MODE',            type=click.Choice(['center-crop', 'center-crop-wide', 'center-crop-dhariwal', 'random-flip-crop']))
 @click.option('--resolution', help='Output resolution (e.g., 512x512)', metavar='WxH',  type=parse_tuple)
+@click.option('--iterations', help='iterate generation n times', metavar='INT',  type=int)
 
 def convert(
     source: str,
     dest: str,
     max_images: Optional[int],
     transform: Optional[str],
-    resolution: Optional[Tuple[int, int]]
+    resolution: Optional[Tuple[int, int]],
+    iterations: Optional[int]
 ):
     """Convert an image dataset into archive format for training.
 
@@ -331,7 +364,7 @@ def convert(
     if dest == '':
         raise click.ClickException('--dest output filename or directory must not be an empty string')
 
-    num_files, input_iter = open_dataset(source, max_images=max_images)
+    num_files, input_iter = open_dataset(source, iterations, max_images=max_images)
     archive_root_dir, save_bytes, close_dest = open_dest(dest)
     transform_image = make_transform(transform, *resolution if resolution is not None else (None, None))
     dataset_attrs = None
@@ -385,7 +418,7 @@ def encode(
     model_url: str,
     source: str,
     dest: str,
-    max_images: Optional[int],
+    max_images: Optional[int]
 ):
     """Encode pixel data to VAE latents."""
     PIL.Image.init()
@@ -393,7 +426,7 @@ def encode(
         raise click.ClickException('--dest output filename or directory must not be an empty string')
 
     vae = StabilityVAEEncoder(vae_name=model_url, batch_size=1)
-    num_files, input_iter = open_dataset(source, max_images=max_images)
+    num_files, input_iter = open_dataset(source, 1, max_images=max_images)
     archive_root_dir, save_bytes, close_dest = open_dest(dest)
     labels = []
 
@@ -424,7 +457,7 @@ def decode(
     model_url: str,
     source: str,
     dest: str,
-    max_images: Optional[int],
+    max_images: Optional[int]
 ):
     """Decode VAE latents to pixels."""
     PIL.Image.init()
@@ -432,7 +465,7 @@ def decode(
         raise click.ClickException('--dest output filename or directory must not be an empty string')
 
     vae = StabilityVAEEncoder(vae_name=model_url, batch_size=1)
-    num_files, input_iter = open_dataset(source, max_images=max_images)
+    num_files, input_iter = open_dataset(source, 1, max_images=max_images)
     archive_root_dir, save_bytes, close_dest = open_dest(dest)
     labels = []
 

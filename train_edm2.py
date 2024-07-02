@@ -21,6 +21,7 @@ import training.training_loop
 # Configuration presets.
 
 config_presets = {
+    'erik':             dnnlib.EasyDict(duration=2**22,    batch=128,  channels=128, lr=0.0006, decay=70000, dropout=0.00, P_mean=-0.4, P_std=1.0),
     'edm2-img512-xs':   dnnlib.EasyDict(duration=2048<<20, batch=2048, channels=128, lr=0.0120, decay=70000, dropout=0.00, P_mean=-0.4, P_std=1.0),
     'edm2-img512-s':    dnnlib.EasyDict(duration=2048<<20, batch=2048, channels=192, lr=0.0100, decay=70000, dropout=0.00, P_mean=-0.4, P_std=1.0),
     'edm2-img512-m':    dnnlib.EasyDict(duration=2048<<20, batch=2048, channels=256, lr=0.0090, decay=70000, dropout=0.10, P_mean=-0.4, P_std=1.0),
@@ -186,6 +187,7 @@ def cmdline(outdir, dry_run, **opts):
     torch.multiprocessing.set_start_method('spawn')
     dist.init()
     dist.print0('Setting up training config...')
+    print(opts)
     c = setup_training_config(**opts)
     print_training_config(run_dir=outdir, c=c)
     if dry_run:
