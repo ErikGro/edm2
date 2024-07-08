@@ -11,11 +11,11 @@ python calculate_metrics.py ref --data=datasets/ihc512.zip \
     --dest=dataset-refs/ihc512.pkl
 
 # Train XS-sized model for ImageNet-512 using 8 GPUs
-torchrun --standalone --nproc_per_node=1 train_edm2.py \
+torchrun --standalone --nproc_per_node=2 train_edm2.py \
     --outdir=training-runs/00000-erik \
     --data=datasets/ihc512-sd.zip \
     --preset=erik \
-    --batch-gpu=128 \
+    --batch-gpu=64 \
     --status=64Ki \
     --snapshot=2Mi \
     --checkpoint=16Mi \
@@ -23,5 +23,10 @@ torchrun --standalone --nproc_per_node=1 train_edm2.py \
 
 # Generate images
 python generate_images.py \
-    --net=training-runs/00000-erik/network-snapshot-0000032-0.100.pkl \
+    --net=training-runs/00000-erik/network-snapshot-0098566-0.100.pkl \
     --outdir=out
+
+# Generate many output images :D
+torchrun --standalone --nproc_per_node=4 generate_images.py \
+    --net=training-runs/00000-erik/network-snapshot-0098566-0.100.pkl --outdir=out-0098566 --subdirs --seeds=0-8200
+

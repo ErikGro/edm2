@@ -18,6 +18,7 @@ import torch
 import PIL.Image
 import dnnlib
 from torch_utils import distributed as dist
+from torchvision.transforms import v2
 
 warnings.filterwarnings('ignore', '`resume_download` is deprecated')
 
@@ -63,10 +64,10 @@ config_presets = {
 # extended to support classifier-free guidance.
 
 def edm_sampler(
-    net, noise, labels=None, gnet=None,
+    encoder, net, noise, labels=None, gnet=None,
     num_steps=32, sigma_min=0.002, sigma_max=80, rho=7, guidance=1,
     S_churn=0, S_min=0, S_max=float('inf'), S_noise=1,
-    dtype=torch.float32, randn_like=torch.randn_like,
+    dtype=torch.float32, randn_like=torch.randn_like
 ):
     # Guided denoiser.
     def denoise(x, t):
@@ -83,6 +84,16 @@ def edm_sampler(
 
     # Main sampling loop.
     x_next = noise.to(dtype) * t_steps[0]
+
+    # heCondition = PIL.Image.open("he.png")
+    # heCondition = v2.ToImage()(heCondition).unsqueeze(0)
+    # latentsCondition = encoder.encode(heCondition).to("cuda")
+
+    # def lowpass(tensor):
+    #     n = 4
+    #     downsampled = torch.nn.functional.interpolate(tensor, scale_factor=1/n)
+    #     return torch.nn.functional.interpolate(downsampled, scale_factor=n)
+
     for i, (t_cur, t_next) in enumerate(zip(t_steps[:-1], t_steps[1:])): # 0, ..., N-1
         x_cur = x_next
 
@@ -103,6 +114,9 @@ def edm_sampler(
         if i < num_steps - 1:
             d_prime = (x_next - denoise(x_next, t_next)) / t_next
             x_next = x_hat + (t_next - t_hat) * (0.5 * d_cur + 0.5 * d_prime)
+
+        # noise = torch.randn_like(images) * sigma
+        # x_next = lowpass(latentsCondition) + x_next - lowpass(x_next)
 
     return x_next
 
@@ -213,7 +227,7 @@ def generate_images(
                             r.labels[:, class_idx] = 1
 
                     # Generate images.
-                    latents = dnnlib.util.call_func_by_name(func_name=sampler_fn, net=net, noise=r.noise,
+                    latents = dnnlib.util.call_func_by_name(func_name=sampler_fn, encoder=encoder, net=net, noise=r.noise,
                         labels=r.labels, gnet=gnet, randn_like=rnd.randn_like, **sampler_kwargs)
                     r.images = encoder.decode(latents)
 
