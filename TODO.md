@@ -1,6 +1,6 @@
 # Creating the dataset
-python dataset_tool.py convert --source=/graphics/scratch2/students/grosskop/IHCDataset/train/ \
-    --dest=datasets/ihc512.zip --resolution=512x512 --transform=random-flip-crop --iterations=8
+python dataset_tool.py convert --source=/graphics/scratch2/students/grosskop/Ki67/TrainValAB/trainA \
+    --dest=datasets-paired/paired.zip --resolution=512x512 --transform=random-flip-crop --iterations=2
 
 # Convert the pixel data to VAE latents
 python dataset_tool.py encode --source=datasets/ihc512.zip \
@@ -23,7 +23,7 @@ torchrun --standalone --nproc_per_node=2 train_edm2.py \
 
 # Generate images
 python generate_images.py \
-    --net=training-runs/00000-erik/network-snapshot-0098566-0.100.pkl \
+    --net=training-runs/00000-erik/network-snapshot-0115343-0.100.pkl \
     --outdir=out
 
 # Generate many output images :D
