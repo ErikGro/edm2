@@ -244,7 +244,7 @@ class UNet(torch.nn.Module):
                 cin = cout + skips.pop()
                 cout = channels
                 self.dec[f'{res}x{res}_block{idx}'] = Block(cin, cout, cemb, flavor='dec', attention=(res in attn_resolutions), **block_kwargs)
-        self.out_conv = MPConv(cout, img_channels, kernel=[3,3])
+        self.out_conv = MPConv(cout, img_channels // 2, kernel=[3,3])
 
     def forward(self, x, noise_labels, class_labels):
         # Embedding.
@@ -307,7 +307,7 @@ class Precond(torch.nn.Module):
         # Run the model.
         x_in = (c_in * x).to(dtype)
         F_x = self.unet(x_in, c_noise, class_labels, **unet_kwargs)
-        D_x = c_skip * x + c_out * F_x.to(torch.float32)
+        D_x = (c_skip * x)[:,4:,:,:] + c_out * F_x.to(torch.float32)
 
         # Estimate uncertainty if requested.
         if return_logvar:

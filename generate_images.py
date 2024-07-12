@@ -19,6 +19,7 @@ import PIL.Image
 import dnnlib
 from torch_utils import distributed as dist
 from torchvision.transforms import v2
+import PIL.Image
 
 warnings.filterwarnings('ignore', '`resume_download` is deprecated')
 
@@ -64,7 +65,7 @@ config_presets = {
 # extended to support classifier-free guidance.
 
 def edm_sampler(
-    encoder, net, noise, labels=None, gnet=None,
+    encoder, net, noise, images, labels=None, gnet=None,
     num_steps=32, sigma_min=0.002, sigma_max=80, rho=7, guidance=1,
     S_churn=0, S_min=0, S_max=float('inf'), S_noise=1,
     dtype=torch.float32, randn_like=torch.randn_like
@@ -107,16 +108,14 @@ def edm_sampler(
             x_hat = x_cur
 
         # Euler step.
-        d_cur = (x_hat - denoise(x_hat, t_hat)) / t_hat
-        x_next = x_hat + (t_next - t_hat) * d_cur
+        d_cur = (x_hat - denoise(torch.concat([images, x_hat], 1), t_hat)) / t_hat 
+        x_next = x_hat + (t_next - t_hat) * d_cur # subtract difference
 
         # Apply 2nd order correction.
         if i < num_steps - 1:
-            d_prime = (x_next - denoise(x_next, t_next)) / t_next
+            d_prime = (x_next - denoise(torch.concat([images, x_next], 1), t_next)) / t_next
             x_next = x_hat + (t_next - t_hat) * (0.5 * d_cur + 0.5 * d_prime)
 
-        # noise = torch.randn_like(images) * sigma
-        # x_next = lowpass(latentsCondition) + x_next - lowpass(x_next)
 
     return x_next
 
@@ -216,9 +215,14 @@ def generate_images(
                 r.seeds = [seeds[idx] for idx in indices]
                 if len(r.seeds) > 0:
 
+                    heImage = PIL.Image.open("he_cropped.png")
+                    heImage = v2.PILToTensor()(heImage).unsqueeze(0)
+                    imagesHE = encoder.encode_latents(encoder.encode_pixels(heImage).to(device))
+                    imagesHE = imagesHE.expand(4, 4, 64, 64)
+
                     # Pick noise and labels.
                     rnd = StackedRandomGenerator(device, r.seeds)
-                    r.noise = rnd.randn([len(r.seeds), net.img_channels, net.img_resolution, net.img_resolution], device=device)
+                    r.noise = rnd.randn([len(r.seeds), 4, net.img_resolution, net.img_resolution], device=device)
                     r.labels = None
                     if net.label_dim > 0:
                         r.labels = torch.eye(net.label_dim, device=device)[rnd.randint(net.label_dim, size=[len(r.seeds)], device=device)]
@@ -227,7 +231,7 @@ def generate_images(
                             r.labels[:, class_idx] = 1
 
                     # Generate images.
-                    latents = dnnlib.util.call_func_by_name(func_name=sampler_fn, encoder=encoder, net=net, noise=r.noise,
+                    latents = dnnlib.util.call_func_by_name(func_name=sampler_fn, encoder=encoder, net=net, noise=r.noise, images=imagesHE,
                         labels=r.labels, gnet=gnet, randn_like=rnd.randn_like, **sampler_kwargs)
                     r.images = encoder.decode(latents)
 

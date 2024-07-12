@@ -19,6 +19,8 @@ from torch_utils import distributed as dist
 from torch_utils import training_stats
 from torch_utils import persistence
 from torch_utils import misc
+from torchvision.transforms import v2
+import PIL.Image
 
 #----------------------------------------------------------------------------
 # Uncertainty-based loss function (Equations 14,15,16,21) proposed in the
@@ -31,13 +33,16 @@ class EDM2Loss:
         self.P_std = P_std
         self.sigma_data = sigma_data
 
-    def __call__(self, net, images, labels=None):
-        rnd_normal = torch.randn([images.shape[0], 1, 1, 1], device=images.device)
+    def __call__(self, net, imagesHE, imagesIHC, labels=None):
+        batchSize = imagesHE.shape[0]
+        rnd_normal = torch.randn([batchSize, 1, 1, 1], device=imagesHE.device)
         sigma = (rnd_normal * self.P_std + self.P_mean).exp()
         weight = (sigma ** 2 + self.sigma_data ** 2) / (sigma * self.sigma_data) ** 2
-        noise = torch.randn_like(images) * sigma
-        denoised, logvar = net(images + noise, sigma, labels, return_logvar=True)
-        loss = (weight / logvar.exp()) * ((denoised - images) ** 2) + logvar
+        noise = torch.randn_like(imagesIHC) * sigma
+        imagesIHC += noise
+        sandwich = torch.cat([imagesHE, imagesIHC], 1)
+        denoised, logvar = net(sandwich, sigma, labels, return_logvar=True) # TODO logvar has to be adjusted?
+        loss = (weight / logvar.exp()) * ((denoised - imagesIHC) ** 2) + logvar
         return loss
 
 #----------------------------------------------------------------------------
@@ -100,15 +105,24 @@ def training_loop(
     assert snapshot_nimg is None or (snapshot_nimg % batch_size == 0 and snapshot_nimg % 1024 == 0)
     assert checkpoint_nimg is None or (checkpoint_nimg % batch_size == 0 and checkpoint_nimg % 1024 == 0)
 
+
     # Setup dataset, encoder, and network.
     dist.print0('Loading dataset...')
     dataset_obj = dnnlib.util.construct_class_by_name(**dataset_kwargs)
     ref_image, ref_label = dataset_obj[0]
     dist.print0('Setting up encoder...')
     encoder = dnnlib.util.construct_class_by_name(**encoder_kwargs)
-    ref_image = encoder.encode_latents(torch.as_tensor(ref_image).to(device).unsqueeze(0))
+    
+    
+    heImage = PIL.Image.open("he_cropped.png")
+    ihcImage = PIL.Image.open("ihc_cropped.png")
+    heImage = v2.PILToTensor()(heImage).unsqueeze(0)
+    ihcImage = v2.PILToTensor()(ihcImage).unsqueeze(0)
+    imagesHE = encoder.encode_latents(encoder.encode_pixels(heImage).to(device))
+    imagesIHC = encoder.encode_latents(encoder.encode_pixels(ihcImage).to(device))
+    sandwich = torch.cat([imagesHE, imagesIHC], 1)
     dist.print0('Constructing network...')
-    interface_kwargs = dict(img_resolution=ref_image.shape[-1], img_channels=ref_image.shape[1], label_dim=ref_label.shape[-1])
+    interface_kwargs = dict(img_resolution=sandwich.shape[-1], img_channels=sandwich.shape[1], label_dim=ref_label.shape[-1])
     net = dnnlib.util.construct_class_by_name(**network_kwargs, **interface_kwargs)
     net.train().requires_grad_(True).to(device)
 
@@ -147,6 +161,7 @@ def training_loop(
     cumulative_training_time = 0
     start_nimg = state.cur_nimg
     stats_jsonl = None
+
     while True:
         done = (state.cur_nimg >= stop_at_nimg)
 
@@ -218,9 +233,8 @@ def training_loop(
         optimizer.zero_grad(set_to_none=True)
         for round_idx in range(num_accumulation_rounds):
             with misc.ddp_sync(ddp, (round_idx == num_accumulation_rounds - 1)):
-                images, labels = next(dataset_iterator)
-                images = encoder.encode_latents(images.to(device))
-                loss = loss_fn(net=ddp, images=images, labels=labels.to(device))
+                labels = None
+                loss = loss_fn(net=ddp, imagesHE=imagesHE, imagesIHC=imagesIHC, labels=labels)
                 training_stats.report('Loss/loss', loss)
                 loss.sum().mul(loss_scaling / batch_gpu_total).backward()
 

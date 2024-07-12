@@ -1,0 +1,665 @@
+Setting up training config...
+{'data': 'datasets/ihc512-sd.zip', 'preset': 'singleSample', 'batch_gpu': 64, 'status': 32768, 'snapshot': 1048576, 'checkpoint': 16777216, 'cond': False, 'duration': None, 'batch': None, 'channels': None, 'dropout': None, 'P_mean': None, 'P_std': None, 'lr': None, 'decay': None, 'fp16': True, 'ls': 1.0, 'bench': True, 'seed': 0}
+
+Training config:
+{
+  "dataset_kwargs": {
+    "class_name": "training.dataset.ImageFolderDataset",
+    "path": "datasets/ihc512-sd.zip",
+    "use_labels": false
+  },
+  "encoder_kwargs": {
+    "class_name": "training.encoders.StabilityVAEEncoder"
+  },
+  "total_nimg": 134217728,
+  "batch_size": 32,
+  "network_kwargs": {
+    "class_name": "training.networks_edm2.Precond",
+    "model_channels": 192,
+    "dropout": 0.0,
+    "use_fp16": true
+  },
+  "loss_kwargs": {
+    "class_name": "training.training_loop.EDM2Loss",
+    "P_mean": -0.4,
+    "P_std": 1.0
+  },
+  "lr_kwargs": {
+    "func_name": "training.training_loop.learning_rate_schedule",
+    "ref_lr": 0.0002,
+    "ref_batches": 70000
+  },
+  "batch_gpu": 64,
+  "loss_scaling": 1.0,
+  "cudnn_benchmark": true,
+  "status_nimg": 32768,
+  "snapshot_nimg": 1048576,
+  "checkpoint_nimg": 16777216,
+  "seed": 0
+}
+
+Output directory:        training-runs/i2i/00000-erik
+Dataset path:            datasets/ihc512-sd.zip
+Class-conditional:       False
+Number of GPUs:          1
+Batch size:              32
+Mixed-precision:         True
+
+Creating output directory...
+Loading dataset...
+Setting up encoder...
+2024-07-11 10:34:59.486901: I tensorflow/core/platform/cpu_feature_guard.cc:182] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+2024-07-11 10:35:00.196119: W tensorflow/compiler/tf2tensorrt/utils/py_utils.cc:38] TF-TRT Warning: Could not find TensorRT
+Constructing network...
+
+Precond                Parameters  Buffers  Output shape       Datatype
+---                    ---         ---      ---                ---     
+unet.emb_fourier       -           384      [32, 192]          float32 
+unet.emb_noise         147456      -        [32, 768]          float32 
+unet.enc.64x64_conv    15552       -        [32, 192, 64, 64]  float16 
+unet.enc.64x64_block0  811009      -        [32, 192, 64, 64]  float16 
+unet.enc.64x64_block1  811009      -        [32, 192, 64, 64]  float16 
+unet.enc.64x64_block2  811009      -        [32, 192, 64, 64]  float16 
+unet.enc.32x32_down    811009      -        [32, 192, 32, 32]  float16 
+unet.enc.32x32_block0  3022849     -        [32, 384, 32, 32]  float16 
+unet.enc.32x32_block1  2949121     -        [32, 384, 32, 32]  float16 
+unet.enc.32x32_block2  2949121     -        [32, 384, 32, 32]  float16 
+unet.enc.16x16_down    2949121     -        [32, 384, 16, 16]  float16 
+unet.enc.16x16_block0  7962625     -        [32, 576, 16, 16]  float16 
+unet.enc.16x16_block1  7741441     -        [32, 576, 16, 16]  float16 
+unet.enc.16x16_block2  7741441     -        [32, 576, 16, 16]  float16 
+unet.enc.8x8_down      6414337     -        [32, 576, 8, 8]    float16 
+unet.enc.8x8_block0    14008321    -        [32, 768, 8, 8]    float16 
+unet.enc.8x8_block1    13565953    -        [32, 768, 8, 8]    float16 
+unet.enc.8x8_block2    13565953    -        [32, 768, 8, 8]    float16 
+unet.dec.8x8_in0       13565953    -        [32, 768, 8, 8]    float16 
+unet.dec.8x8_in1       11206657    -        [32, 768, 8, 8]    float16 
+unet.dec.8x8_block0    20054017    -        [32, 768, 8, 8]    float16 
+unet.dec.8x8_block1    20054017    -        [32, 768, 8, 8]    float16 
+unet.dec.8x8_block2    20054017    -        [32, 768, 8, 8]    float16 
+unet.dec.8x8_block3    18579457    -        [32, 768, 8, 8]    float16 
+unet.dec.16x16_up      11206657    -        [32, 768, 16, 16]  float16 
+unet.dec.16x16_block0  12496897    -        [32, 576, 16, 16]  float16 
+unet.dec.16x16_block1  11390977    -        [32, 576, 16, 16]  float16 
+unet.dec.16x16_block2  11390977    -        [32, 576, 16, 16]  float16 
+unet.dec.16x16_block3  10285057    -        [32, 576, 16, 16]  float16 
+unet.dec.32x32_up      6414337     -        [32, 576, 32, 32]  float16 
+unet.dec.32x32_block0  5308417     -        [32, 384, 32, 32]  float16 
+unet.dec.32x32_block1  4571137     -        [32, 384, 32, 32]  float16 
+unet.dec.32x32_block2  4571137     -        [32, 384, 32, 32]  float16 
+unet.dec.32x32_block3  3833857     -        [32, 384, 32, 32]  float16 
+unet.dec.64x64_up      2949121     -        [32, 384, 64, 64]  float16 
+unet.dec.64x64_block0  1585153     -        [32, 192, 64, 64]  float16 
+unet.dec.64x64_block1  1216513     -        [32, 192, 64, 64]  float16 
+unet.dec.64x64_block2  1216513     -        [32, 192, 64, 64]  float16 
+unet.dec.64x64_block3  1216513     -        [32, 192, 64, 64]  float16 
+unet.out_conv          6912        -        [32, 4, 64, 64]    float16 
+unet                   1           -        [32, 4, 64, 64]    float16 
+<top-level>            128         256      [32, 4, 64, 64]    float32 
+---                    ---         ---      ---                ---     
+Total                  279451749   640      -                  -       
+
+Setting up training state...
+Training from 0 kimg to 134217 kimg:
+
+Status: kimg 0.0       time 15s          sec/tick 14.93    sec/kimg 0.000   maintenance 14.93   cpumem 2.76   gpumem 6.44   reserved 6.53  
+Saving network-snapshot-0000000-0.050.pkl ... done
+Saving network-snapshot-0000000-0.100.pkl ... done
+Status: kimg 32.8      time 3m 42s       sec/tick 206.62   sec/kimg 5.740   maintenance 18.53   cpumem 3.71   gpumem 9.83   reserved 10.02 
+Status: kimg 65.5      time 6m 49s       sec/tick 187.28   sec/kimg 5.713   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 98.3      time 9m 56s       sec/tick 187.39   sec/kimg 5.716   maintenance 0.08    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 131.1     time 13m 04s      sec/tick 187.47   sec/kimg 5.719   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 163.8     time 16m 11s      sec/tick 187.63   sec/kimg 5.717   maintenance 0.29    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 196.6     time 19m 19s      sec/tick 187.54   sec/kimg 5.721   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 229.4     time 22m 27s      sec/tick 187.83   sec/kimg 5.720   maintenance 0.39    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 262.1     time 25m 34s      sec/tick 187.74   sec/kimg 5.725   maintenance 0.15    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 294.9     time 28m 42s      sec/tick 187.74   sec/kimg 5.723   maintenance 0.20    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 327.7     time 31m 50s      sec/tick 187.69   sec/kimg 5.726   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 360.4     time 34m 58s      sec/tick 187.82   sec/kimg 5.725   maintenance 0.21    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 393.2     time 38m 05s      sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 426.0     time 41m 13s      sec/tick 187.68   sec/kimg 5.725   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 458.8     time 44m 21s      sec/tick 187.75   sec/kimg 5.728   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 491.5     time 47m 29s      sec/tick 187.77   sec/kimg 5.728   maintenance 0.07    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 524.3     time 50m 37s      sec/tick 187.98   sec/kimg 5.729   maintenance 0.26    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 557.1     time 53m 45s      sec/tick 188.47   sec/kimg 5.726   maintenance 0.83    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 589.8     time 56m 54s      sec/tick 189.39   sec/kimg 5.730   maintenance 1.63    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 622.6     time 1h 00m 02s   sec/tick 187.96   sec/kimg 5.730   maintenance 0.19    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 655.4     time 1h 03m 10s   sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 688.1     time 1h 06m 18s   sec/tick 187.93   sec/kimg 5.733   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 720.9     time 1h 09m 26s   sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 753.7     time 1h 12m 34s   sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 786.4     time 1h 15m 42s   sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 819.2     time 1h 18m 50s   sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 852.0     time 1h 21m 57s   sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 884.7     time 1h 25m 05s   sec/tick 187.93   sec/kimg 5.731   maintenance 0.12    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 917.5     time 1h 28m 19s   sec/tick 194.07   sec/kimg 5.724   maintenance 6.50    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 950.3     time 1h 31m 27s   sec/tick 188.08   sec/kimg 5.735   maintenance 0.16    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 983.0     time 1h 34m 35s   sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1015.8    time 1h 37m 43s   sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1048.6    time 1h 40m 51s   sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0001048-0.050.pkl ... done
+Saving network-snapshot-0001048-0.100.pkl ... done
+Status: kimg 1081.3    time 1h 44m 10s   sec/tick 198.74   sec/kimg 5.727   maintenance 11.08   cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1114.1    time 1h 47m 18s   sec/tick 187.93   sec/kimg 5.733   maintenance 0.07    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1146.9    time 1h 50m 26s   sec/tick 188.22   sec/kimg 5.734   maintenance 0.32    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1179.6    time 1h 53m 34s   sec/tick 187.91   sec/kimg 5.731   maintenance 0.12    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1212.4    time 1h 56m 42s   sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1245.2    time 1h 59m 49s   sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1278.0    time 2h 02m 57s   sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1310.7    time 2h 06m 05s   sec/tick 187.76   sec/kimg 5.728   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1343.5    time 2h 09m 13s   sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1376.3    time 2h 12m 21s   sec/tick 187.76   sec/kimg 5.728   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1409.0    time 2h 15m 28s   sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1441.8    time 2h 18m 36s   sec/tick 187.98   sec/kimg 5.730   maintenance 0.22    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1474.6    time 2h 21m 44s   sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1507.3    time 2h 24m 52s   sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1540.1    time 2h 28m 00s   sec/tick 188.12   sec/kimg 5.733   maintenance 0.27    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1572.9    time 2h 31m 08s   sec/tick 187.83   sec/kimg 5.730   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1605.6    time 2h 34m 16s   sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1638.4    time 2h 37m 24s   sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1671.2    time 2h 40m 32s   sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1703.9    time 2h 43m 40s   sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1736.7    time 2h 46m 48s   sec/tick 187.94   sec/kimg 5.732   maintenance 0.13    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1769.5    time 2h 49m 55s   sec/tick 187.93   sec/kimg 5.733   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1802.2    time 2h 53m 04s   sec/tick 188.30   sec/kimg 5.731   maintenance 0.50    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1835.0    time 2h 56m 12s   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1867.8    time 2h 59m 20s   sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1900.5    time 3h 02m 28s   sec/tick 188.08   sec/kimg 5.738   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1933.3    time 3h 05m 36s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.07    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1966.1    time 3h 08m 44s   sec/tick 188.05   sec/kimg 5.737   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 1998.8    time 3h 11m 52s   sec/tick 187.94   sec/kimg 5.733   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 2031.6    time 3h 15m 00s   sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 2064.4    time 3h 18m 08s   sec/tick 187.93   sec/kimg 5.733   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Status: kimg 2097.2    time 3h 21m 16s   sec/tick 188.06   sec/kimg 5.737   maintenance 0.06    cpumem 3.71   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0002097-0.050.pkl ... done
+Saving network-snapshot-0002097-0.100.pkl ... done
+Status: kimg 2129.9    time 3h 24m 39s   sec/tick 203.41   sec/kimg 5.732   maintenance 15.58   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2162.7    time 3h 27m 47s   sec/tick 188.17   sec/kimg 5.741   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2195.5    time 3h 30m 55s   sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2228.2    time 3h 34m 03s   sec/tick 188.04   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2261.0    time 3h 37m 11s   sec/tick 188.03   sec/kimg 5.734   maintenance 0.14    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2293.8    time 3h 40m 20s   sec/tick 188.29   sec/kimg 5.736   maintenance 0.34    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2326.5    time 3h 43m 27s   sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2359.3    time 3h 46m 36s   sec/tick 188.29   sec/kimg 5.735   maintenance 0.36    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2392.1    time 3h 49m 44s   sec/tick 188.17   sec/kimg 5.732   maintenance 0.36    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2424.8    time 3h 52m 52s   sec/tick 188.53   sec/kimg 5.735   maintenance 0.62    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2457.6    time 3h 56m 00s   sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2490.4    time 3h 59m 08s   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2523.1    time 4h 02m 16s   sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2555.9    time 4h 05m 24s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2588.7    time 4h 08m 32s   sec/tick 187.94   sec/kimg 5.733   maintenance 0.08    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2621.4    time 4h 11m 40s   sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2654.2    time 4h 14m 48s   sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2687.0    time 4h 17m 56s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2719.7    time 4h 21m 04s   sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2752.5    time 4h 24m 12s   sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2785.3    time 4h 27m 20s   sec/tick 188.03   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2818.0    time 4h 30m 28s   sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2850.8    time 4h 33m 36s   sec/tick 188.52   sec/kimg 5.734   maintenance 0.63    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2883.6    time 4h 36m 44s   sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2916.4    time 4h 39m 52s   sec/tick 187.97   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2949.1    time 4h 43m 00s   sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 2981.9    time 4h 46m 08s   sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3014.7    time 4h 49m 16s   sec/tick 188.00   sec/kimg 5.733   maintenance 0.14    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3047.4    time 4h 52m 25s   sec/tick 188.82   sec/kimg 5.733   maintenance 0.97    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3080.2    time 4h 55m 33s   sec/tick 188.01   sec/kimg 5.732   maintenance 0.18    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3113.0    time 4h 58m 41s   sec/tick 187.94   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3145.7    time 5h 01m 49s   sec/tick 188.18   sec/kimg 5.730   maintenance 0.41    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0003145-0.050.pkl ... done
+Saving network-snapshot-0003145-0.100.pkl ... done
+Status: kimg 3178.5    time 5h 05m 09s   sec/tick 199.79   sec/kimg 5.730   maintenance 12.02   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3211.3    time 5h 08m 17s   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3244.0    time 5h 11m 25s   sec/tick 188.04   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3276.8    time 5h 14m 33s   sec/tick 187.94   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3309.6    time 5h 17m 41s   sec/tick 188.01   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3342.3    time 5h 20m 49s   sec/tick 188.00   sec/kimg 5.734   maintenance 0.11    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3375.1    time 5h 23m 57s   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3407.9    time 5h 27m 05s   sec/tick 188.00   sec/kimg 5.735   maintenance 0.08    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3440.6    time 5h 30m 13s   sec/tick 188.09   sec/kimg 5.738   maintenance 0.07    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3473.4    time 5h 33m 21s   sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3506.2    time 5h 36m 29s   sec/tick 188.07   sec/kimg 5.737   maintenance 0.09    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3538.9    time 5h 39m 39s   sec/tick 189.87   sec/kimg 5.730   maintenance 2.10    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3571.7    time 5h 42m 47s   sec/tick 188.13   sec/kimg 5.737   maintenance 0.14    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3604.5    time 5h 45m 55s   sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3637.2    time 5h 49m 03s   sec/tick 188.01   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3670.0    time 5h 52m 11s   sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3702.8    time 5h 55m 19s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3735.6    time 5h 58m 27s   sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3768.3    time 6h 01m 35s   sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3801.1    time 6h 04m 43s   sec/tick 187.93   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3833.9    time 6h 07m 51s   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3866.6    time 6h 10m 59s   sec/tick 188.07   sec/kimg 5.738   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3899.4    time 6h 14m 07s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3932.2    time 6h 17m 15s   sec/tick 188.04   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3964.9    time 6h 20m 23s   sec/tick 188.08   sec/kimg 5.735   maintenance 0.14    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 3997.7    time 6h 23m 31s   sec/tick 188.05   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4030.5    time 6h 26m 39s   sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4063.2    time 6h 29m 47s   sec/tick 188.05   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4096.0    time 6h 32m 55s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4128.8    time 6h 36m 03s   sec/tick 188.03   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4161.5    time 6h 39m 11s   sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4194.3    time 6h 42m 19s   sec/tick 188.03   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0004194-0.050.pkl ... done
+Saving network-snapshot-0004194-0.100.pkl ... done
+Status: kimg 4227.1    time 6h 45m 38s   sec/tick 199.14   sec/kimg 5.729   maintenance 11.41   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4259.8    time 6h 48m 46s   sec/tick 188.15   sec/kimg 5.740   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4292.6    time 6h 51m 54s   sec/tick 188.01   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4325.4    time 6h 55m 02s   sec/tick 188.08   sec/kimg 5.738   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4358.1    time 6h 58m 10s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4390.9    time 7h 01m 18s   sec/tick 188.01   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4423.7    time 7h 04m 26s   sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4456.4    time 7h 07m 34s   sec/tick 188.04   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4489.2    time 7h 10m 42s   sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4522.0    time 7h 13m 50s   sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4554.8    time 7h 16m 58s   sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4587.5    time 7h 20m 06s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4620.3    time 7h 23m 14s   sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4653.1    time 7h 26m 22s   sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4685.8    time 7h 29m 30s   sec/tick 187.93   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4718.6    time 7h 32m 38s   sec/tick 188.03   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4751.4    time 7h 35m 46s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4784.1    time 7h 38m 54s   sec/tick 188.04   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4816.9    time 7h 42m 02s   sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4849.7    time 7h 45m 10s   sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4882.4    time 7h 48m 18s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4915.2    time 7h 51m 26s   sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4948.0    time 7h 54m 34s   sec/tick 187.97   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 4980.7    time 7h 57m 42s   sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5013.5    time 8h 00m 50s   sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5046.3    time 8h 03m 57s   sec/tick 187.94   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5079.0    time 8h 07m 06s   sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5111.8    time 8h 10m 13s   sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5144.6    time 8h 13m 21s   sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5177.3    time 8h 16m 29s   sec/tick 187.93   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5210.1    time 8h 19m 37s   sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5242.9    time 8h 22m 45s   sec/tick 187.93   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0005242-0.050.pkl ... done
+Saving network-snapshot-0005242-0.100.pkl ... done
+Status: kimg 5275.6    time 8h 26m 06s   sec/tick 200.67   sec/kimg 5.731   maintenance 12.87   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5308.4    time 8h 29m 14s   sec/tick 188.07   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5341.2    time 8h 32m 22s   sec/tick 188.04   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5374.0    time 8h 35m 30s   sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5406.7    time 8h 38m 38s   sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5439.5    time 8h 41m 46s   sec/tick 187.94   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5472.3    time 8h 44m 54s   sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5505.0    time 8h 48m 02s   sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5537.8    time 8h 51m 10s   sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5570.6    time 8h 54m 18s   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5603.3    time 8h 57m 26s   sec/tick 188.09   sec/kimg 5.738   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5636.1    time 9h 00m 34s   sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5668.9    time 9h 03m 42s   sec/tick 188.10   sec/kimg 5.739   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5701.6    time 9h 06m 50s   sec/tick 188.00   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5734.4    time 9h 09m 58s   sec/tick 188.09   sec/kimg 5.738   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5767.2    time 9h 13m 06s   sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5799.9    time 9h 16m 14s   sec/tick 188.08   sec/kimg 5.738   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5832.7    time 9h 19m 22s   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5865.5    time 9h 22m 30s   sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5898.2    time 9h 25m 38s   sec/tick 188.06   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5931.0    time 9h 28m 46s   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5963.8    time 9h 31m 54s   sec/tick 188.07   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 5996.5    time 9h 35m 02s   sec/tick 187.97   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6029.3    time 9h 38m 10s   sec/tick 188.06   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6062.1    time 9h 41m 18s   sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6094.8    time 9h 44m 26s   sec/tick 188.01   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6127.6    time 9h 47m 34s   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6160.4    time 9h 50m 42s   sec/tick 188.06   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6193.2    time 9h 53m 50s   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6225.9    time 9h 56m 58s   sec/tick 188.07   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6258.7    time 10h 00m 06s  sec/tick 187.97   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6291.5    time 10h 03m 14s  sec/tick 188.03   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0006291-0.050.pkl ... done
+Saving network-snapshot-0006291-0.100.pkl ... done
+Status: kimg 6324.2    time 10h 06m 35s  sec/tick 200.52   sec/kimg 5.729   maintenance 12.78   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6357.0    time 10h 09m 43s  sec/tick 188.13   sec/kimg 5.739   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6389.8    time 10h 12m 51s  sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6422.5    time 10h 15m 59s  sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6455.3    time 10h 19m 07s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6488.1    time 10h 22m 15s  sec/tick 188.01   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6520.8    time 10h 25m 23s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6553.6    time 10h 28m 31s  sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6586.4    time 10h 31m 39s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6619.1    time 10h 34m 47s  sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6651.9    time 10h 37m 55s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6684.7    time 10h 41m 03s  sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6717.4    time 10h 44m 10s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6750.2    time 10h 47m 18s  sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6783.0    time 10h 50m 26s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6815.7    time 10h 53m 34s  sec/tick 187.94   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6848.5    time 10h 56m 42s  sec/tick 187.84   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6881.3    time 10h 59m 50s  sec/tick 187.93   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6914.0    time 11h 02m 58s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6946.8    time 11h 06m 06s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 6979.6    time 11h 09m 14s  sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7012.4    time 11h 12m 22s  sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7045.1    time 11h 15m 30s  sec/tick 187.94   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7077.9    time 11h 18m 37s  sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7110.7    time 11h 21m 45s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7143.4    time 11h 24m 53s  sec/tick 187.83   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7176.2    time 11h 28m 01s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7209.0    time 11h 31m 09s  sec/tick 187.83   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7241.7    time 11h 34m 17s  sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7274.5    time 11h 37m 25s  sec/tick 187.84   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7307.3    time 11h 40m 32s  sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7340.0    time 11h 43m 40s  sec/tick 187.84   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0007340-0.050.pkl ... done
+Saving network-snapshot-0007340-0.100.pkl ... done
+Status: kimg 7372.8    time 11h 47m 02s  sec/tick 201.53   sec/kimg 5.731   maintenance 13.73   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7405.6    time 11h 50m 10s  sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7438.3    time 11h 53m 18s  sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7471.1    time 11h 56m 26s  sec/tick 187.84   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7503.9    time 11h 59m 34s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7536.6    time 12h 02m 41s  sec/tick 187.83   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7569.4    time 12h 05m 49s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7602.2    time 12h 08m 57s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7634.9    time 12h 12m 05s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7667.7    time 12h 15m 13s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7700.5    time 12h 18m 21s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7733.2    time 12h 21m 28s  sec/tick 187.76   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7766.0    time 12h 24m 36s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7798.8    time 12h 27m 44s  sec/tick 187.77   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7831.6    time 12h 30m 52s  sec/tick 187.83   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7864.3    time 12h 34m 00s  sec/tick 187.74   sec/kimg 5.727   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7897.1    time 12h 37m 07s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7929.9    time 12h 40m 15s  sec/tick 187.76   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7962.6    time 12h 43m 23s  sec/tick 187.76   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 7995.4    time 12h 46m 31s  sec/tick 187.84   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8028.2    time 12h 49m 39s  sec/tick 187.75   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8060.9    time 12h 52m 46s  sec/tick 187.85   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8093.7    time 12h 55m 54s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8126.5    time 12h 59m 02s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8159.2    time 13h 02m 10s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8192.0    time 13h 05m 18s  sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8224.8    time 13h 08m 26s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8257.5    time 13h 11m 33s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8290.3    time 13h 14m 41s  sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8323.1    time 13h 17m 49s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8355.8    time 13h 20m 57s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8388.6    time 13h 24m 05s  sec/tick 187.91   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0008388-0.050.pkl ... done
+Saving network-snapshot-0008388-0.100.pkl ... done
+Status: kimg 8421.4    time 13h 27m 32s  sec/tick 206.62   sec/kimg 5.728   maintenance 18.92   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8454.1    time 13h 30m 40s  sec/tick 188.10   sec/kimg 5.738   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8486.9    time 13h 33m 47s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8519.7    time 13h 36m 55s  sec/tick 187.93   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8552.4    time 13h 40m 03s  sec/tick 187.84   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8585.2    time 13h 43m 11s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8618.0    time 13h 46m 19s  sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8650.8    time 13h 49m 27s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8683.5    time 13h 52m 35s  sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8716.3    time 13h 55m 43s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8749.1    time 13h 58m 50s  sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8781.8    time 14h 01m 58s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8814.6    time 14h 05m 06s  sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8847.4    time 14h 08m 14s  sec/tick 187.94   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8880.1    time 14h 11m 22s  sec/tick 187.83   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8912.9    time 14h 14m 30s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8945.7    time 14h 17m 38s  sec/tick 187.85   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 8978.4    time 14h 20m 45s  sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9011.2    time 14h 23m 53s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9044.0    time 14h 27m 01s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9076.7    time 14h 30m 09s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9109.5    time 14h 33m 17s  sec/tick 187.84   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9142.3    time 14h 36m 25s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9175.0    time 14h 39m 33s  sec/tick 187.85   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9207.8    time 14h 42m 40s  sec/tick 187.94   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9240.6    time 14h 45m 48s  sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9273.3    time 14h 48m 56s  sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9306.1    time 14h 52m 04s  sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9338.9    time 14h 55m 12s  sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9371.6    time 14h 58m 20s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9404.4    time 15h 01m 28s  sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9437.2    time 15h 04m 36s  sec/tick 187.85   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0009437-0.050.pkl ... done
+Saving network-snapshot-0009437-0.100.pkl ... done
+Status: kimg 9470.0    time 15h 07m 57s  sec/tick 201.08   sec/kimg 5.731   maintenance 13.29   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9502.7    time 15h 11m 05s  sec/tick 188.01   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9535.5    time 15h 14m 13s  sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9568.3    time 15h 17m 21s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9601.0    time 15h 20m 29s  sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9633.8    time 15h 23m 36s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9666.6    time 15h 26m 44s  sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9699.3    time 15h 29m 52s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9732.1    time 15h 33m 00s  sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9764.9    time 15h 36m 08s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9797.6    time 15h 39m 16s  sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9830.4    time 15h 42m 24s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9863.2    time 15h 45m 32s  sec/tick 187.97   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9895.9    time 15h 48m 40s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9928.7    time 15h 51m 48s  sec/tick 187.94   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9961.5    time 15h 54m 56s  sec/tick 187.85   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 9994.2    time 15h 58m 03s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10027.0   time 16h 01m 11s  sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10059.8   time 16h 04m 19s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10092.5   time 16h 07m 27s  sec/tick 187.97   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10125.3   time 16h 10m 35s  sec/tick 187.84   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10158.1   time 16h 13m 43s  sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10190.8   time 16h 16m 51s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10223.6   time 16h 19m 59s  sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10256.4   time 16h 23m 07s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10289.2   time 16h 26m 15s  sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10321.9   time 16h 29m 23s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10354.7   time 16h 32m 31s  sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10387.5   time 16h 35m 38s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10420.2   time 16h 38m 46s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10453.0   time 16h 41m 54s  sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10485.8   time 16h 45m 02s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0010485-0.050.pkl ... done
+Saving network-snapshot-0010485-0.100.pkl ... done
+Status: kimg 10518.5   time 16h 48m 32s  sec/tick 210.09   sec/kimg 5.726   maintenance 22.45   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10551.3   time 16h 51m 40s  sec/tick 188.07   sec/kimg 5.738   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10584.1   time 16h 54m 48s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10616.8   time 16h 57m 56s  sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10649.6   time 17h 01m 04s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10682.4   time 17h 04m 12s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10715.1   time 17h 07m 20s  sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10747.9   time 17h 10m 27s  sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10780.7   time 17h 13m 35s  sec/tick 187.83   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10813.4   time 17h 16m 43s  sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10846.2   time 17h 19m 51s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10879.0   time 17h 22m 59s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10911.7   time 17h 26m 07s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10944.5   time 17h 29m 14s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 10977.3   time 17h 32m 22s  sec/tick 187.77   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11010.0   time 17h 35m 30s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11042.8   time 17h 38m 38s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11075.6   time 17h 41m 46s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11108.4   time 17h 44m 54s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11141.1   time 17h 48m 01s  sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11173.9   time 17h 51m 09s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11206.7   time 17h 54m 17s  sec/tick 187.74   sec/kimg 5.727   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11239.4   time 17h 57m 25s  sec/tick 187.84   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11272.2   time 18h 00m 33s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11305.0   time 18h 03m 40s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11337.7   time 18h 06m 48s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11370.5   time 18h 09m 56s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11403.3   time 18h 13m 04s  sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11436.0   time 18h 16m 12s  sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11468.8   time 18h 19m 20s  sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11501.6   time 18h 22m 28s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11534.3   time 18h 25m 35s  sec/tick 187.82   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0011534-0.050.pkl ... done
+Saving network-snapshot-0011534-0.100.pkl ... done
+Status: kimg 11567.1   time 18h 29m 02s  sec/tick 206.78   sec/kimg 5.730   maintenance 19.02   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11599.9   time 18h 32m 10s  sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11632.6   time 18h 35m 18s  sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11665.4   time 18h 38m 26s  sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11698.2   time 18h 41m 34s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11730.9   time 18h 44m 42s  sec/tick 187.77   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11763.7   time 18h 47m 49s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11796.5   time 18h 50m 57s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11829.2   time 18h 54m 05s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11862.0   time 18h 57m 13s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11894.8   time 19h 00m 21s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11927.6   time 19h 03m 29s  sec/tick 187.77   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11960.3   time 19h 06m 36s  sec/tick 187.84   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 11993.1   time 19h 09m 44s  sec/tick 187.77   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12025.9   time 19h 12m 52s  sec/tick 187.84   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12058.6   time 19h 16m 00s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12091.4   time 19h 19m 08s  sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12124.2   time 19h 22m 15s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12156.9   time 19h 25m 23s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12189.7   time 19h 28m 31s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12222.5   time 19h 31m 39s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12255.2   time 19h 34m 47s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12288.0   time 19h 37m 55s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12320.8   time 19h 41m 02s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12353.5   time 19h 44m 10s  sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12386.3   time 19h 47m 18s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12419.1   time 19h 50m 26s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12451.8   time 19h 53m 34s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12484.6   time 19h 56m 42s  sec/tick 187.77   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12517.4   time 19h 59m 50s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12550.1   time 20h 02m 57s  sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12582.9   time 20h 06m 05s  sec/tick 187.85   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0012582-0.050.pkl ... done
+Saving network-snapshot-0012582-0.100.pkl ... done
+Status: kimg 12615.7   time 20h 09m 29s  sec/tick 203.46   sec/kimg 5.729   maintenance 15.73   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12648.4   time 20h 12m 37s  sec/tick 188.07   sec/kimg 5.738   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12681.2   time 20h 15m 45s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12714.0   time 20h 18m 52s  sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12746.8   time 20h 22m 00s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12779.5   time 20h 25m 08s  sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12812.3   time 20h 28m 16s  sec/tick 187.81   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12845.1   time 20h 31m 24s  sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12877.8   time 20h 34m 32s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12910.6   time 20h 37m 39s  sec/tick 187.84   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12943.4   time 20h 40m 47s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 12976.1   time 20h 43m 55s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13008.9   time 20h 47m 03s  sec/tick 187.77   sec/kimg 5.728   maintenance 0.07    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13041.7   time 20h 50m 11s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13074.4   time 20h 53m 19s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13107.2   time 20h 56m 26s  sec/tick 187.86   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13140.0   time 20h 59m 34s  sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13172.7   time 21h 02m 42s  sec/tick 187.78   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13205.5   time 21h 05m 50s  sec/tick 187.85   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13238.3   time 21h 08m 58s  sec/tick 187.74   sec/kimg 5.727   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13271.0   time 21h 12m 05s  sec/tick 187.85   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13303.8   time 21h 15m 13s  sec/tick 187.75   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13336.6   time 21h 18m 21s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13369.3   time 21h 21m 29s  sec/tick 187.76   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13402.1   time 21h 24m 37s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13434.9   time 21h 27m 44s  sec/tick 187.76   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13467.6   time 21h 30m 52s  sec/tick 187.85   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13500.4   time 21h 34m 00s  sec/tick 187.76   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13533.2   time 21h 37m 08s  sec/tick 187.84   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13566.0   time 21h 40m 16s  sec/tick 187.76   sec/kimg 5.728   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13598.7   time 21h 43m 24s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13631.5   time 21h 46m 31s  sec/tick 187.79   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0013631-0.050.pkl ... done
+Saving network-snapshot-0013631-0.100.pkl ... done
+Status: kimg 13664.3   time 21h 49m 53s  sec/tick 201.99   sec/kimg 5.731   maintenance 14.22   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13697.0   time 21h 53m 01s  sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13729.8   time 21h 56m 09s  sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13762.6   time 21h 59m 17s  sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13795.3   time 22h 02m 25s  sec/tick 187.94   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13828.1   time 22h 05m 33s  sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13860.9   time 22h 08m 41s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13893.6   time 22h 11m 49s  sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13926.4   time 22h 14m 56s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13959.2   time 22h 18m 04s  sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 13991.9   time 22h 21m 12s  sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14024.7   time 22h 24m 20s  sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14057.5   time 22h 27m 28s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14090.2   time 22h 30m 36s  sec/tick 187.83   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14123.0   time 22h 33m 44s  sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14155.8   time 22h 36m 51s  sec/tick 187.80   sec/kimg 5.729   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14188.5   time 22h 39m 59s  sec/tick 187.81   sec/kimg 5.730   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14221.3   time 22h 43m 07s  sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14254.1   time 22h 46m 15s  sec/tick 187.84   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14286.8   time 22h 49m 23s  sec/tick 187.94   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14319.6   time 22h 52m 31s  sec/tick 187.85   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14352.4   time 22h 55m 39s  sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14385.2   time 22h 58m 47s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14417.9   time 23h 01m 54s  sec/tick 187.96   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14450.7   time 23h 05m 02s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14483.5   time 23h 08m 10s  sec/tick 187.94   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14516.2   time 23h 11m 18s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14549.0   time 23h 14m 26s  sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14581.8   time 23h 17m 34s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14614.5   time 23h 20m 42s  sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14647.3   time 23h 23m 50s  sec/tick 187.91   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14680.1   time 23h 26m 58s  sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0014680-0.050.pkl ... done
+Saving network-snapshot-0014680-0.100.pkl ... done
+Status: kimg 14712.8   time 23h 30m 22s  sec/tick 203.89   sec/kimg 5.731   maintenance 16.09   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14745.6   time 23h 33m 30s  sec/tick 188.15   sec/kimg 5.740   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14778.4   time 23h 36m 38s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14811.1   time 23h 39m 46s  sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14843.9   time 23h 42m 54s  sec/tick 187.89   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14876.7   time 23h 46m 02s  sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14909.4   time 23h 49m 09s  sec/tick 187.87   sec/kimg 5.731   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14942.2   time 23h 52m 17s  sec/tick 187.97   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 14975.0   time 23h 55m 25s  sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15007.7   time 23h 58m 33s  sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15040.5   time 1d 00h 01m   sec/tick 187.88   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15073.3   time 1d 00h 04m   sec/tick 188.01   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15106.0   time 1d 00h 07m   sec/tick 187.90   sec/kimg 5.732   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15138.8   time 1d 00h 11m   sec/tick 187.97   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15171.6   time 1d 00h 14m   sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15204.4   time 1d 00h 17m   sec/tick 187.94   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15237.1   time 1d 00h 20m   sec/tick 188.02   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15269.9   time 1d 00h 23m   sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15302.7   time 1d 00h 26m   sec/tick 188.03   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15335.4   time 1d 00h 29m   sec/tick 187.94   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15368.2   time 1d 00h 33m   sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15401.0   time 1d 00h 36m   sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15433.7   time 1d 00h 39m   sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15466.5   time 1d 00h 42m   sec/tick 187.91   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15499.3   time 1d 00h 45m   sec/tick 188.00   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15532.0   time 1d 00h 48m   sec/tick 187.92   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15564.8   time 1d 00h 51m   sec/tick 188.03   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15597.6   time 1d 00h 54m   sec/tick 187.93   sec/kimg 5.733   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15630.3   time 1d 00h 58m   sec/tick 188.05   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15663.1   time 1d 01h 01m   sec/tick 187.97   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15695.9   time 1d 01h 04m   sec/tick 188.05   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15728.6   time 1d 01h 07m   sec/tick 187.95   sec/kimg 5.734   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Saving network-snapshot-0015728-0.050.pkl ... done
+Saving network-snapshot-0015728-0.100.pkl ... done
+Status: kimg 15761.4   time 1d 01h 10m   sec/tick 202.58   sec/kimg 5.737   maintenance 14.58   cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15794.2   time 1d 01h 13m   sec/tick 188.14   sec/kimg 5.740   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15826.9   time 1d 01h 17m   sec/tick 188.06   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15859.7   time 1d 01h 20m   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15892.5   time 1d 01h 23m   sec/tick 188.06   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15925.2   time 1d 01h 26m   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15958.0   time 1d 01h 29m   sec/tick 188.05   sec/kimg 5.737   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 15990.8   time 1d 01h 32m   sec/tick 187.98   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 16023.6   time 1d 01h 35m   sec/tick 188.10   sec/kimg 5.739   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 16056.3   time 1d 01h 39m   sec/tick 188.01   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 16089.1   time 1d 01h 42m   sec/tick 188.10   sec/kimg 5.739   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 16121.9   time 1d 01h 45m   sec/tick 188.01   sec/kimg 5.736   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 16154.6   time 1d 01h 48m   sec/tick 188.10   sec/kimg 5.738   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 16187.4   time 1d 01h 51m   sec/tick 187.99   sec/kimg 5.735   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+Status: kimg 16220.2   time 1d 01h 54m   sec/tick 188.19   sec/kimg 5.741   maintenance 0.06    cpumem 3.85   gpumem 8.45   reserved 8.60  
+/usr/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 14 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '
+E0712 12:30:46.924000 139821306171840 torch/distributed/elastic/multiprocessing/api.py:826] failed (exitcode: -15) local_rank: 0 (pid: 3908982) of binary: /home/grosskop/grosskop-python-env/bin/python3
+Traceback (most recent call last):
+  File "/home/grosskop/grosskop-python-env/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+  File "/home/grosskop/grosskop-python-env/lib/python3.10/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 347, in wrapper
+    return f(*args, **kwargs)
+  File "/home/grosskop/grosskop-python-env/lib/python3.10/site-packages/torch/distributed/run.py", line 879, in main
+    run(args)
+  File "/home/grosskop/grosskop-python-env/lib/python3.10/site-packages/torch/distributed/run.py", line 870, in run
+    elastic_launch(
+  File "/home/grosskop/grosskop-python-env/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 132, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+  File "/home/grosskop/grosskop-python-env/lib/python3.10/site-packages/torch/distributed/launcher/api.py", line 263, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+=========================================================
+train_edm2.py FAILED
+---------------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+---------------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2024-07-12_12:30:46
+  host      : cgpool1906.cs.uni-tuebingen.de
+  rank      : 0 (local_rank: 0)
+  exitcode  : -15 (pid: 3908982)
+  error_file: <N/A>
+  traceback : Signal 15 (SIGTERM) received by PID 3908982
+=========================================================

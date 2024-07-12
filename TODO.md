@@ -30,3 +30,19 @@ python generate_images.py \
 torchrun --standalone --nproc_per_node=4 generate_images.py \
     --net=training-runs/00000-erik/network-snapshot-0098566-0.100.pkl --outdir=out-0098566 --subdirs --seeds=0-8200
 
+
+
+# Train on single image pair
+torchrun --standalone --nproc_per_node=1 train_edm2.py \
+    --outdir=training-runs/i2i/00000-erik \
+    --data=datasets/ihc512-sd.zip \
+    --preset=singleSample \
+    --batch-gpu=64 \
+    --status=32Ki \
+    --snapshot=1Mi \
+    --checkpoint=16Mi \
+    --cond=False
+
+python generate_images.py \
+    --net=training-runs/i2i/00000-erik/network-snapshot-0015728-0.100 \
+    --outdir=outi2i

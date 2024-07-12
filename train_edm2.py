@@ -21,7 +21,8 @@ import training.training_loop
 # Configuration presets.
 
 config_presets = {
-    'erik':             dnnlib.EasyDict(duration=2**27,    batch=64*4,  channels=192, lr=0.0015, decay=70000, dropout=0.00, P_mean=-0.4, P_std=1.0),
+    'singleSample':     dnnlib.EasyDict(duration=2**27,    batch=8*4,  channels=192, lr=0.0002, decay=70000, dropout=0.00, P_mean=-0.4, P_std=1.0),
+    'erik':             dnnlib.EasyDict(duration=2**27,    batch=64*4, channels=192, lr=0.0015, decay=70000, dropout=0.00, P_mean=-0.4, P_std=1.0),
     'edm2-img512-xs':   dnnlib.EasyDict(duration=2048<<20, batch=2048, channels=128, lr=0.0120, decay=70000, dropout=0.00, P_mean=-0.4, P_std=1.0),
     'edm2-img512-s':    dnnlib.EasyDict(duration=2048<<20, batch=2048, channels=192, lr=0.0100, decay=70000, dropout=0.00, P_mean=-0.4, P_std=1.0),
     'edm2-img512-m':    dnnlib.EasyDict(duration=2048<<20, batch=2048, channels=256, lr=0.0090, decay=70000, dropout=0.10, P_mean=-0.4, P_std=1.0),
